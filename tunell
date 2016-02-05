@@ -1,0 +1,78 @@
+#!/bin/sh
+
+COMMAND="$1"
+SUBDOMAIN="$2"
+VIPPATH="$3"
+CURRENTPATH="$PWD"
+LOG_PREFIX="VIP QuickStart Tunnel:"
+
+if [ "deps" == "$COMMAND" ]; then
+	echo "$LOG_PREFIX Install dependencies to local machine"
+
+	echo "$LOG_PREFIX Install SSHPASS"
+	brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
+
+	echo "$LOG_PREFIX Done."
+	
+elif [ "init" == "$COMMAND" ]; then
+	echo "$LOG_PREFIX Initialize tunnel in Vagrant"
+
+    cd "$VIPPATH"
+    
+	echo "$LOG_PREFIX Remove previous scproxy version"
+	vagrant ssh -c "rm -rf scproxy"
+
+	echo "$LOG_PREFIX Create new directory for scproxy"
+	vagrant ssh -c "mkdir scproxy"
+
+	echo "$LOG_PREFIX Copy files to Vagrant"
+	sshpass -p 'vagrant' scp "$CURRENTPATH/app/site.conf" "$CURRENTPATH/app/start.js" "$CURRENTPATH/app/package.json" "$CURRENTPATH/app/bin/node" vagrant@vip.local:scproxy/
+
+	echo "$LOG_PREFIX Install dependencies"
+	vagrant ssh -c "cd scproxy && npm install"
+	
+	echo "$LOG_PREFIX Backup NGINX config"
+    vagrant ssh -c "sudo cp /etc/nginx/sites-available/50-_.conf /home/vagrant/scproxy/backup.conf"
+
+elif [ "start" == "$COMMAND" ]; then
+
+	echo "$LOG_PREFIX start command"
+
+    cd "$VIPPATH" 
+   
+	echo "$LOG_PREFIX Replace NGINX config"
+	vagrant ssh -c "cd scproxy && sudo rm /etc/nginx/sites-available/50-_.conf" 
+	vagrant ssh -c "cd scproxy && sudo cp site.conf /etc/nginx/sites-available/50-_.conf"
+
+	echo "$LOG_PREFIX Restarting NGINX"
+	vagrant ssh -c "sudo service nginx restart"
+
+	echo "$LOG_PREFIX Starting tunnel"
+	vagrant ssh -c "cd scproxy && ./node start.js $SUBDOMAIN"
+
+elif [ "stop" == "$COMMAND" ]; then
+	echo "$LOG_PREFIX stop command"
+
+    cd "$VIPPATH"
+    
+	echo "$LOG_PREFIX Remove custom NGINX config"
+	vagrant ssh -c "sudo rm /etc/nginx/sites-available/50-_.conf"
+
+	echo "$LOG_PREFIX Revert to backup NGINX config"
+	vagrant ssh -c "sudo cp /home/vagrant/scproxy/backup.conf /etc/nginx/sites-available/50-_.conf"
+
+	echo "$LOG_PREFIX Restarting NGINX"
+	vagrant ssh -c "sudo service nginx restart"
+
+	echo "$LOG_PREFIX Update VIP QuickStart parameters"
+    vagrant ssh -c "mysql wordpress -u root -e 'UPDATE wordpress.wp_site SET domain = \"vip.local\" WHERE id > 0;'"
+    vagrant ssh -c "mysql wordpress -u root -e 'UPDATE wp_blogs SET domain = \"vip.local\" WHERE blog_id > 0;'"
+    vagrant ssh -c "mysql wordpress -u root -e 'UPDATE wp_2_options SET option_value = \"http://vip.local/stylecaster\" WHERE option_name = \"siteurl\" OR option_name = \"home\";'"
+
+	echo "$LOG_PREFIX Restarting Memcache (clear cache)"
+	vagrant ssh -c "sudo service memcached restart"
+	
+else
+	echo "$LOG_PREFIX Command not found"
+	
+fi	
