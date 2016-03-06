@@ -1,0 +1,12 @@
+{
+  "name": "stylecaster-local-tunnel",
+  "version": "0.0.3",
+  "description": "StyleCaster Local Tunnel",
+  "main": "app.js",
+  "author": "Makarenko Yuri",
+  "license": "ISC",
+  "dependencies": {
+    "exec": "^0.2.1",
+    "localtunnel": "^1.8.1"
+  }
+}
