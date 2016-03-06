@@ -1,10 +1,10 @@
+// load modules
 var localtunnel = require('localtunnel');
 var child_process = require('child_process');
+var config = require('config');
 
-var args = process.argv.slice(2);
-var subdomain = typeof args[0] != 'undefined' ? args[0] : '';
-var tunnel = false;
-
+// initialize parameters
+var subdomain = config.get('subdomain');
 
 // Start tunnel  
 tunnel = localtunnel(80, {
