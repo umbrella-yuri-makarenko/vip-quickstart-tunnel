@@ -1,16 +1,12 @@
-process.chdir('/home/wordpress/tunnel');
 process.send("Created new process. PID: " + process.pid);
 
 // load modules
 var localtunnel = require('localtunnel');
-var config = require('config');
-
-// initialize parameters
-var subdomain = config.get('subdomain');
+var config = require('/home/wordpress/tunnel/config/default.json');
 
 // Start tunnel  
 tunnel = localtunnel(80, {
-  subdomain: subdomain
+  subdomain: config.subdomain
 }, function(err, tunnel) {
   if (err) {
     process.send(err.toString());
