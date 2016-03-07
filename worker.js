@@ -1,3 +1,5 @@
+process.send("Created new process. PID: " + process.pid);
+
 // load modules
 var localtunnel = require('localtunnel');
 var config = require('config');
@@ -15,5 +17,5 @@ tunnel = localtunnel(80, {
   }
 
   var httpURL = tunnel.url.replace('https://', 'http://');
-  process.send(httpURL);
+  process.send("Started tunnel on URL: " + httpURL);
 });
