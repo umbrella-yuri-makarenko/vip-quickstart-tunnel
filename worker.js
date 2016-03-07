@@ -1,3 +1,4 @@
+process.chdir('/home/wordpress/tunnel');
 process.send("Created new process. PID: " + process.pid);
 
 // load modules
