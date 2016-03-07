@@ -12,8 +12,7 @@ tunnel = localtunnel(80, {
   subdomain: subdomain
 }, function(err, tunnel) {
   if (err) {
-  	console.log("Fatal Error: " + err);
-    process.send("Fatal Error: " + err);
+    process.send(err.toString());
     process.exit();
   }
 
