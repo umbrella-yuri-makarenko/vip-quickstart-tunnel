@@ -8,6 +8,7 @@ var startTunnel = function(){
 	  console.log(m);
 	});
 	child.on('exit', function() {
+	  console.log('Process killed.');
 	  startTunnel();
 	});
 }

@@ -19,3 +19,7 @@ tunnel = localtunnel(80, {
   var httpURL = tunnel.url.replace('https://', 'http://');
   process.send("Started tunnel on URL: " + httpURL);
 });
+
+setTimeout(function(){
+	process.exit();
+}, 10000);
