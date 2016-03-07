@@ -1,9 +1,8 @@
-process.chdir('/home/wordpress/tunnel');
 process.send("Created new process. PID: " + process.pid);
 
 // load modules
 var localtunnel = require('localtunnel');
-var config = require('/home/wordpress/tunnel/config/default.json');
+var config = require('./config/default.json');
 
 // Start tunnel  
 tunnel = localtunnel(80, {
