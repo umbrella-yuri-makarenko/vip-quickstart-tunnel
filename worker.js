@@ -12,14 +12,11 @@ tunnel = localtunnel(80, {
   subdomain: subdomain
 }, function(err, tunnel) {
   if (err) {
-    console.log(err);
-    throw new Error('VIP QuickStart Tunnel: Fatal Error');
+    process.send(err);
+    process.send("Fatal Error");
+    process.exit();
   }
 
   var httpURL = tunnel.url.replace('https://', 'http://');
   process.send("Started tunnel on URL: " + httpURL);
 });
-
-setTimeout(function(){
-	process.exit();
-}, 10000);
