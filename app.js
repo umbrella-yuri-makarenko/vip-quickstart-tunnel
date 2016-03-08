@@ -1,3 +1,10 @@
+var args = process.argv.slice(2);
+
+if ( typeof args[0] != 'undefined' && args[0] == 'domain' && typeof args[1] != 'undefined' ) {
+	console.log('Saved daomain name: ' + args[1]);
+	return;
+}
+
 var cp = require('child_process');
 
 var startTunnel = function(){
