@@ -6,7 +6,7 @@ var config = require('./config/default.json');
 
 // Start tunnel  
 tunnel = localtunnel(80, {
-  subdomain: config.subdomain ? config.subdomain : '';
+  subdomain: config.subdomain ? config.subdomain : ''
 }, function(err, tunnel) {
   if (err) {
     process.send(err.toString());
