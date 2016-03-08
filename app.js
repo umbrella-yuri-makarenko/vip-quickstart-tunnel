@@ -1,12 +1,14 @@
 var args = process.argv.slice(2);
 
 if ( typeof args[0] != 'undefined' && args[0] == 'subdomain' && typeof args[1] != 'undefined' ) {
+	var fs = require('fs');
+	
 	try {
 		var config = require('./config/default.json');
 	} catch (ex) {
 		var config = {};
 	}
-	
+
 	config.subdomain = args[1];
 	fs.writeFileSync('./config/default.json', config.join(',') , 'utf-8'); 
 	console.log('Saved subdomain: ' + config.subdomain);
