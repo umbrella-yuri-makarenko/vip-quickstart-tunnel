@@ -34,6 +34,8 @@ if ( typeof args[0] != 'undefined' && args[0] == 'subdomain' && typeof args[1] !
 		console.log('Saved subdomain: ' + config.subdomain);
 		process.exit();
 	},5000);
+	
+	return;
 }
 
 var cp = require('child_process');
